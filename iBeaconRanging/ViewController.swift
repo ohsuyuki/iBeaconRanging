@@ -7,19 +7,50 @@
 //
 
 import UIKit
+import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CLLocationManagerDelegate {
+
+    var locationManager: CLLocationManager!
+    var isRanging: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+
+        let status = CLLocationManager.authorizationStatus()
+        if (status != CLAuthorizationStatus.authorizedAlways) {
+            locationManager.requestAlwaysAuthorization()
+        }
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch (status) {
+        case .authorizedAlways:
+            iBeaconRanging()
+            break
+        default:
+            break
+        }
     }
 
+    func iBeaconRanging() {
+        guard isRanging == false else {
+            return
+        }
+
+        let beaconRegion = CLBeaconRegion(proximityUUID: UUID(uuidString: "48534442-4C45-4144-80C0-1800FFFFFFFF")!, identifier: "6XFdNd")
+        locationManager.startRangingBeacons(in: beaconRegion)
+
+        isRanging = true
+    }
+
+    func locationManager(_ manager: CLLocationManager, didRangeBeacons beacons: [CLBeacon], in region: CLBeaconRegion) {
+        for beacon in beacons {
+            print(beacon)
+        }
+    }
 
 }
-
