@@ -19,6 +19,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 
         locationManager = CLLocationManager()
         locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.allowsBackgroundLocationUpdates = true
 
         let status = CLLocationManager.authorizationStatus()
         if (status != CLAuthorizationStatus.authorizedAlways) {
@@ -40,6 +42,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         guard isRanging == false else {
             return
         }
+
+        locationManager.startUpdatingLocation()
 
         let beaconRegion = CLBeaconRegion(proximityUUID: UUID(uuidString: "48534442-4C45-4144-80C0-1800FFFFFFFF")!, identifier: "6XFdNd")
         locationManager.startRangingBeacons(in: beaconRegion)
